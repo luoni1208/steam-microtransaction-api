@@ -1,5 +1,7 @@
 import steamController from './controllers/steam.controller';
 import { Express, RequestHandler, Router } from 'express';
+import path from 'path';
+import fs from 'fs';
 
 // Utility to handle missing fields in the request
 const handleMissingFields = (fields: string[]) => (req, res, next) => {
@@ -19,6 +21,7 @@ const validateCheckPurchaseStatus: RequestHandler = handleMissingFields([
   'orderId',
   'transId',
 ]);
+
 const validateInitPurchase: RequestHandler = handleMissingFields([
   'appId',
   'category',
@@ -224,4 +227,69 @@ export default (app: Express): void => {
   app.use((_req, res) => {
     res.status(404).send('');
   });
+  
+    /**
+     * @api {get} /GetItemPrices Get All Item Prices
+     * @apiName GetItemPrices
+     * @apiGroup Microtransaction
+     * @apiVersion  1.0.0
+     * @apiDescription Retrieve the prices of all items or a specific item if itemId is provided.
+     *
+     * @apiParam  {Number} [itemId] Optional item ID to retrieve a single item price.
+     *
+     * @apiSuccess (Response: 200) {Boolean} success Response Status
+     * @apiSuccess (Response: 200) {Array|Object} products Array of products or a single product object.
+     *
+     * @apiSuccessExample {Object} Success-Response:
+     * HTTP/1.1 200
+     * {
+     *     "success": true,
+     *     "products": [
+     *         { "id": 1001, "price": 199 },
+     *         { "id": 1002, "price": 299 },
+     *         ...
+     *     ]
+     * }
+     *
+     * @apiSuccessExample {Object} Single-Product Response:
+     * HTTP/1.1 200
+     * {
+     *     "success": true,
+     *     "product": { "id": 1001, "price": 199 }
+     * }
+     *
+     * @apiErrorExample {Object} Error-Response:
+     * HTTP/1.1 404
+     * {
+     *     "success": false,
+     *     "message": "Item not found"
+     * }
+     */
+
+    router.get('/GetItemPrices', (req: Request, res: Response) => {
+        const pricesFilePath = path.join(__dirname, '../products.json');
+
+        fs.readFile(pricesFilePath, 'utf-8', (err, data) => {
+            if (err) {
+                console.error("Error reading products.json:", err);
+                return res.status(500).json({ success: false, message: 'Error retrieving prices.' });
+            }
+
+            const products = JSON.parse(data);
+            const itemId = parseInt(req.query.itemId as string, 10);
+
+            // If itemId is provided in query, filter for that item only
+            if (itemId) {
+                const product = products.find((p: { id: number; }) => p.id === itemId);
+                if (product) {
+                    res.status(200).json({ success: true, product });
+                } else {
+                    res.status(404).json({ success: false, message: 'Item not found' });
+                }
+            } else {
+                // Otherwise, return all products
+                res.status(200).json({ success: true, products });
+            }
+        });
+    });
 };
