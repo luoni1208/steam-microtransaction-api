@@ -266,7 +266,7 @@ export default (app: Express): void => {
      * }
      */
 
-    router.get('/GetItemPrices', (req: Request, res: Response) => {
+    router.get('/GetItemPrices', (_req, res) => {
         const pricesFilePath = path.join(__dirname, '../products.json');
 
         fs.readFile(pricesFilePath, 'utf-8', (err, data) => {
