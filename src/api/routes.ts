@@ -276,7 +276,7 @@ export default (app: Express): void => {
             }
 
             const products = JSON.parse(data);
-            const itemId = parseInt(req.query.itemId as string, 10);
+            const itemId = parseInt(_req.query.itemId as string, 10);
 
             // If itemId is provided in query, filter for that item only
             if (itemId) {
