@@ -1,7 +1,6 @@
 import constants from '@src/constants';
 
 import {
-  ISteamEconomy,
   ISteamMicroGetUserInfo,
   ISteamMicroTx,
   ISteamOpenTransaction,
@@ -155,24 +154,4 @@ export default class SteamRequest {
     const urlRequested = `${url}${interf}/${method}/v${version}/?${parsed}`;
     return await this.httpClient.get<T>(urlRequested);
   }
-
-  private async _post<T>(
-    interf: string,
-    method: string,
-    version: number,
-    data: URLSearchParams,
-    url: string = this.options.url
-  ): Promise<T> {
-    const urlRequested = `${url}${interf}/${method}/v${version}/`;
-    return await this.httpClient.post<T>(urlRequested, data);
-  }
-  async getAssetPrices(appId: number, currency: string): Promise<ISteamAssetPricesResponse> {
-  const data = {
-    key: this.options.webkey,
-    appid: appId,
-    currency: currency,
-  };
-
-  return await this._get<ISteamAssetPricesResponse>('ISteamEconomy', 'GetAssetPrices', 1, data);
-}
 }
