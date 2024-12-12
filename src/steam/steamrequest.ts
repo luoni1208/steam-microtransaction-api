@@ -154,4 +154,15 @@ export default class SteamRequest {
     const urlRequested = `${url}${interf}/${method}/v${version}/?${parsed}`;
     return await this.httpClient.get<T>(urlRequested);
   }
+
+  private async _post<T>(
+    interf: string,
+    method: string,
+    version: number,
+    data: URLSearchParams,
+    url: string = this.options.url
+  ): Promise<T> {
+    const urlRequested = `${url}${interf}/${method}/v${version}/`;
+    return await this.httpClient.post<T>(urlRequested, data);
+  }
 }
