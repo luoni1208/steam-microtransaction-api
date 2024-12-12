@@ -296,5 +296,5 @@ const getAssetPrices = async (req, res) => {
   }
 };
 
-app.get('/get-asset-prices', getAssetPrices);
+router.get('/get-asset-prices', getAssetPrices);
 };
