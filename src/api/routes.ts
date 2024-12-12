@@ -2,6 +2,7 @@ import steamController from './controllers/steam.controller';
 import { Express, RequestHandler, Router } from 'express';
 import path from 'path';
 import fs from 'fs';
+import axios from 'axios';
 
 // Utility to handle missing fields in the request
 const handleMissingFields = (fields: string[]) => (req, res, next) => {
@@ -281,4 +282,19 @@ export default (app: Express): void => {
         res.status(200).json({ success: true, products });
     });
 });
+
+const getAssetPrices = async (req, res) => {
+  const { appid } = req.query; // Retrieve the app ID from the query
+  const apiKey = process.env.STEAM_API_KEY; // Set your Steam API key
+  const url = `https://api.steampowered.com/ISteamEconomy/GetAssetPrices/v1/?key=${apiKey}&appid=${appid}`;
+  
+  try {
+    const response = await axios.get(url);
+    res.json(response.data); // Return the asset prices data
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch asset prices' });
+  }
+};
+
+app.get('/get-asset-prices', getAssetPrices);
 };
