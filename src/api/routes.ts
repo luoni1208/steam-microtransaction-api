@@ -2,6 +2,9 @@ import steamController from './controllers/steam.controller';
 import { Express, RequestHandler, Router } from 'express';
 import path from 'path';
 import fs from 'fs';
+import express from 'express';
+import axios from 'axios';
+import constants from '@src/constants';
 
 // Utility to handle missing fields in the request
 const handleMissingFields = (fields: string[]) => (req, res, next) => {
@@ -282,12 +285,6 @@ export default (app: Express): void => {
     });
 });
   
-import express from 'express';
-import axios from 'axios';
-import constants from './constants';
-
-const router = express.Router();
-
 router.get('/GetAssetPrices', async (req, res) => {
   const currency = req.query.currency; // Get the currency parameter from the client
   const appId = '1432860'; // Your Steam App ID
@@ -299,8 +296,7 @@ router.get('/GetAssetPrices', async (req, res) => {
 
   try {
     // Call Steam's GetAssetPrices API
-    const steamResponse = await axios.get(
-      `https://partner.steam-api.com/ISteamEconomy/GetAssetPrices/v1/`,
+    const steamResponse = await axios.get(`https://partner.steam-api.com/ISteamEconomy/GetAssetPrices/v1/`,
       {
         params: {
           key: steamApiKey,
@@ -320,6 +316,4 @@ router.get('/GetAssetPrices', async (req, res) => {
     res.status(500).json({ success: false, message: 'Error fetching asset prices.' });
   }
 });
-
-export default router
 };
