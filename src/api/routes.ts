@@ -2,9 +2,6 @@ import steamController from './controllers/steam.controller';
 import { Express, RequestHandler, Router } from 'express';
 import path from 'path';
 import fs from 'fs';
-import express from 'express';
-import axios from 'axios';
-import constants from '@src/constants';
 
 // Utility to handle missing fields in the request
 const handleMissingFields = (fields: string[]) => (req, res, next) => {
@@ -285,35 +282,13 @@ export default (app: Express): void => {
     });
 });
   
-router.get('/GetAssetPrices', async (req, res) => {
-  const currency = req.query.currency; // Get the currency parameter from the client
-  const appId = '1432860'; // Your Steam App ID
-  const steamApiKey = constants.webkey; // Get the API key from constants.ts
+const appId = 1432860;
+const currency = 'USD';
+const assetPrices = await steamRequest.getAssetPrices(appId, currency);
 
-  if (!currency) {
-    return res.status(400).json({ success: false, message: 'Currency is required.' });
-  }
-
-  try {
-    // Call Steam's GetAssetPrices API
-    const steamResponse = await axios.get(`https://partner.steam-api.com/ISteamEconomy/GetAssetPrices/v1/`,
-      {
-        params: {
-          key: steamApiKey,
-          appid: appId,
-          currency: currency,
-        },
-      }
-    );
-
-    // Forward the Steam API response to the client
-    res.status(200).json({
-      success: true,
-      data: steamResponse.data,
-    });
-  } catch (error) {
-    console.error('Error fetching asset prices from Steam:', error);
-    res.status(500).json({ success: false, message: 'Error fetching asset prices.' });
-  }
-});
+if (assetPrices.success) {
+  console.log('Asset prices:', assetPrices.asset_prices);
+} else {
+  console.log('Failed to fetch asset prices');
+}
 };
