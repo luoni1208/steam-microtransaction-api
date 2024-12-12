@@ -281,14 +281,4 @@ export default (app: Express): void => {
         res.status(200).json({ success: true, products });
     });
 });
-  
-const appId = 1432860;
-const currency = 'USD';
-const assetPrices = await steamRequest.getAssetPrices(appId, currency);
-
-if (assetPrices.success) {
-  console.log('Asset prices:', assetPrices.asset_prices);
-} else {
-  console.log('Failed to fetch asset prices');
-}
 };
