@@ -3,7 +3,7 @@ import { Express, RequestHandler, Router } from 'express';
 import path from 'path';
 import fs from 'fs';
 import axios from 'axios';
-import { webkey } from './constants'; 
+import { webkey } from  '@src/constants';
 
 // Utility to handle missing fields in the request
 const handleMissingFields = (fields: string[]) => (req, res, next) => {
