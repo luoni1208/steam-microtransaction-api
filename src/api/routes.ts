@@ -7,7 +7,7 @@ import fs from 'fs';
 const handleMissingFields = (fields: string[]) => (req, res, next) => {
   for (const field of fields) {
     if (!req.body[field]) {
-      return res.status(400).json({ error: Missing field: ${field} });
+      return res.status(400).json({ error: `Missing field: ${field}` });
     }
   }
   next();
@@ -266,7 +266,7 @@ export default (app: Express): void => {
      * }
      */
 
-    router.get('/GetItemPrices', (_req, res) => {
+      router.get('/GetItemPrices', (_req, res) => {
     const pricesFilePath = path.join(__dirname, '../products.json');
 
     fs.readFile(pricesFilePath, 'utf-8', (err, data) => {
@@ -281,28 +281,26 @@ export default (app: Express): void => {
         res.status(200).json({ success: true, products });
     });
 });
-
+  
 import express from 'express';
 import axios from 'axios';
-import constants from '@src/constants';
+import constants from './constants';
 
 const router = express.Router();
 
-router.get('/GetAssetPrices', async (req, res) => 
-  {
+router.get('/GetAssetPrices', async (req, res) => {
   const currency = req.query.currency; // Get the currency parameter from the client
   const appId = '1432860'; // Your Steam App ID
   const steamApiKey = constants.webkey; // Get the API key from constants.ts
 
-  if (!currency) 
-  {
+  if (!currency) {
     return res.status(400).json({ success: false, message: 'Currency is required.' });
   }
 
-  try 
-  {
+  try {
     // Call Steam's GetAssetPrices API
-    const steamResponse = await axios.get(      https://partner.steam-api.com/ISteamEconomy/GetAssetPrices/v1/,
+    const steamResponse = await axios.get(
+      `https://partner.steam-api.com/ISteamEconomy/GetAssetPrices/v1/`,
       {
         params: {
           key: steamApiKey,
@@ -322,3 +320,6 @@ router.get('/GetAssetPrices', async (req, res) =>
     res.status(500).json({ success: false, message: 'Error fetching asset prices.' });
   }
 });
+
+export default router
+};
