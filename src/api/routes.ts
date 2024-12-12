@@ -267,29 +267,18 @@ export default (app: Express): void => {
      */
 
     router.get('/GetItemPrices', (_req, res) => {
-        const pricesFilePath = path.join(__dirname, '../products.json');
+    const pricesFilePath = path.join(__dirname, '../products.json');
 
-        fs.readFile(pricesFilePath, 'utf-8', (err, data) => {
-            if (err) {
-                console.error("Error reading products.json:", err);
-                return res.status(500).json({ success: false, message: 'Error retrieving prices.' });
-            }
+    fs.readFile(pricesFilePath, 'utf-8', (err, data) => {
+        if (err) {
+            console.error("Error reading products.json:", err);
+            return res.status(500).json({ success: false, message: 'Error retrieving prices.' });
+        }
 
-            const products = JSON.parse(data);
-            const itemId = parseInt(_req.query.itemId as string, 10);
+        const products = JSON.parse(data);
 
-            // If itemId is provided in query, filter for that item only
-            if (itemId) {
-                const product = products.find((p: { id: number; }) => p.id === itemId);
-                if (product) {
-                    res.status(200).json({ success: true, product });
-                } else {
-                    res.status(404).json({ success: false, message: 'Item not found' });
-                }
-            } else {
-                // Otherwise, return all products
-                res.status(200).json({ success: true, products });
-            }
-        });
+        // Return all products if no itemId is provided
+        res.status(200).json({ success: true, products });
     });
+});
 };
