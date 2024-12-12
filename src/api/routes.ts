@@ -3,6 +3,7 @@ import { Express, RequestHandler, Router } from 'express';
 import path from 'path';
 import fs from 'fs';
 import axios from 'axios';
+import { webkey } from './constants'; 
 
 // Utility to handle missing fields in the request
 const handleMissingFields = (fields: string[]) => (req, res, next) => {
@@ -285,7 +286,7 @@ export default (app: Express): void => {
 
 const getAssetPrices = async (req, res) => {
   const { appid } = req.query; // Retrieve the app ID from the query
-  const apiKey = process.env.STEAM_API_KEY; // Set your Steam API key
+  const apiKey = webkey; // Set your Steam API key
   const url = `https://partner.steam-api.com/ISteamEconomy/GetAssetPrices/v1/?key=${apiKey}&appid=${appid}`;
   
   try {
