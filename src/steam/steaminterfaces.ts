@@ -103,3 +103,19 @@ export declare interface ISteamQueryTxResponse {
     };
   };
 }
+
+export interface ISteamEconomy {
+  GetAssetPrices: {
+    appid: number;
+    currency: string;
+  };
+}
+
+export interface ISteamAssetPricesResponse {
+  success: boolean;
+  asset_prices: Array<{
+    asset_id: string;
+    price: string;
+    currency: string;
+  }>;
+}
