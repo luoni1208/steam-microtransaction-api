@@ -1,30 +1,28 @@
 import steamController from './controllers/steam.controller';
-import constants from './constants'; // Ensure constants.ts exists
-import express, { Express, RequestHandler, Router } from 'express';
+import constants from '@src/constants';
+import express, { Express, Request, Response, RequestHandler, Router, NextFunction } from 'express';
 import path from 'path';
 import fs from 'fs';
 import axios from 'axios';
 
 // Utility to handle missing fields in the request
-const handleMissingFields = (fields: string[]) => (req, res, next) => {
-  for (const field of fields) {
-    if (!req.body[field]) {
-      return res.status(400).json({ error: `Missing field: ${field}` });
+const handleMissingFields =
+  (fields: string[]): RequestHandler =>
+  (req: Request, res: Response, next: NextFunction) => {
+    for (const field of fields) {
+      if (!req.body[field]) {
+        return res.status(400).json({ error: `Missing field: ${field}` });
+      }
     }
-  }
-  next();
-};
+    next();
+  };
 
-const validateGetReliableUserInfo: RequestHandler = handleMissingFields(['steamId']);
-const validateCheckAppOwnership: RequestHandler = handleMissingFields(['steamId', 'appId']);
-const validateFinalizePurchase: RequestHandler = handleMissingFields(['appId', 'orderId']);
-const validateCheckPurchaseStatus: RequestHandler = handleMissingFields([
-  'appId',
-  'orderId',
-  'transId',
-]);
-
-const validateInitPurchase: RequestHandler = handleMissingFields([
+// Validate functions
+const validateGetReliableUserInfo = handleMissingFields(['steamId']);
+const validateCheckAppOwnership = handleMissingFields(['steamId', 'appId']);
+const validateFinalizePurchase = handleMissingFields(['appId', 'orderId']);
+const validateCheckPurchaseStatus = handleMissingFields(['appId', 'orderId', 'transId']);
+const validateInitPurchase = handleMissingFields([
   'appId',
   'category',
   'itemDescription',
@@ -36,7 +34,9 @@ const validateInitPurchase: RequestHandler = handleMissingFields([
 export default (app: Express): void => {
   const router = Router();
 
-  router.get('/', (_req, res) => res.status(200).json({ status: true }));
+  router.get('/', (_req: Request, res: Response) =>
+    res.status(200).json({ status: true })
+  );
 
   router.post(
     '/GetReliableUserInfo',
@@ -56,11 +56,7 @@ export default (app: Express): void => {
     steamController.checkPurchaseStatus
   );
 
-  /**
-   * @api {get} /GetItemPrices Get All Item Prices
-   * @apiName GetItemPrices
-   */
-  router.get('/GetItemPrices', (req, res) => {
+  router.get('/GetItemPrices', (req: Request, res: Response) => {
     const pricesFilePath = path.join(__dirname, '../products.json');
     const { itemId } = req.query;
 
@@ -75,7 +71,6 @@ export default (app: Express): void => {
       try {
         const products = JSON.parse(data);
 
-        // Return specific item if itemId is provided
         if (itemId) {
           const item = products.find((product) => product.id === Number(itemId));
           if (!item) {
@@ -89,14 +84,16 @@ export default (app: Express): void => {
         res.status(200).json({ success: true, products });
       } catch (parseErr) {
         console.error('Error parsing products.json:', parseErr);
-        res.status(500).json({ success: false, message: 'Error processing data.' });
+        res
+          .status(500)
+          .json({ success: false, message: 'Error processing data.' });
       }
     });
   });
 
-  router.get('/GetAssetPrices', async (req, res) => {
+  router.get('/GetAssetPrices', async (req: Request, res: Response) => {
     const currency = req.query.currency;
-    const appId = '1432860'; // Your Steam App ID
+    const appId = '1432860';
     const steamApiKey = constants.webkey;
 
     if (!currency) {
@@ -120,7 +117,7 @@ export default (app: Express): void => {
 
   app.use('/', router);
 
-  app.use((err: any, _req, res, _next) => {
+  app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
     res.status(500).json({
       error: 500,
       message: err.message || 'Something went wrong',
@@ -128,5 +125,5 @@ export default (app: Express): void => {
     });
   });
 
-  app.use((_req, res) => res.status(404).send(''));
+  app.use((_req: Request, res: Response) => res.status(404).send(''));
 };
