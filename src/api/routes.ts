@@ -292,7 +292,10 @@ const getAssetPrices = async (req, res) => {
     const response = await axios.get(url);
     res.json(response.data); // Return the asset prices data
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch asset prices' });
+   res.status(500).json({
+      error: 'Failed to fetch asset prices',
+      url: url,  // Add the URL to the response for easier debugging
+    });
   }
 };
 
