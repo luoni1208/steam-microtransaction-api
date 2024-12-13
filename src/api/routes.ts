@@ -284,7 +284,7 @@ export default (app: Express): void => {
     });
 });
 
-const getAssetPrices = async (req, res) => {
+const GetAssetPrices = async (req, res) => {
   const { appid, currency } = req.query; // Retrieve the app ID from the query
   const apiKey = constants.webkey; // Set your Steam API key
   const url = `https://partner.steam-api.com/ISteamEconomy/GetAssetPrices/v1/?key=${apiKey}&appid=${appid}&currency=${currency}`;
@@ -294,18 +294,14 @@ const getAssetPrices = async (req, res) => {
     const products = response.data; // No need to parse as axios does this automatically
      res.status(200).json({
       success: true,
-      url: url,  // Add the URL to the success response
       products
     });
   } catch (error) {
    res.status(500).json({
-      error: 'Failed to fetch asset prices',
-      url: url,  // Add the URL to the response for easier debugging
-      details: error.message,
-      responseBody: error.response ? error.response.data : 'No response body'
+      error: 'Failed to fetch asset prices'
     });
   }
 };
 
-router.get('/get-asset-prices', getAssetPrices);
+router.get('/GetAssetPrices', getAssetPrices);
 };
