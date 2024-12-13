@@ -303,5 +303,5 @@ const GetAssetPrices = async (req, res) => {
   }
 };
 
-router.get('/GetAssetPrices', getAssetPrices);
+router.get('/GetAssetPrices', GetAssetPrices);
 };
