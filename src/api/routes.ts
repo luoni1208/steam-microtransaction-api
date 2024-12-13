@@ -293,17 +293,6 @@ const getAssetPrices = async (req, res) => {
   try {
     const response = await axios.get(url);
     const { data } = response;
-
-    // Check if the Steam API returned success
-    if (data && data.result && data.result.success) 
-    {
-      // Return the asset prices data in the expected format
-      res.status(200).json({
-        result: {
-          success: true,
-          assets: data.result.assets || [] // Send the assets or an empty array if none are found
-        }
-      });
   } catch (error) {
    res.status(500).json({
       error: 'Failed to fetch asset prices',
