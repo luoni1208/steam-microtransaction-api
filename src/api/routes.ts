@@ -290,8 +290,15 @@ const getAssetPrices = async (req, res) => {
   const url = `https://partner.steam-api.com/ISteamEconomy/GetAssetPrices/v1/?key=${apiKey}&appid=${appid}`;
   
   try {
-    const response = await axios.get(url);
-    res.json(response.data); // Return the asset prices data
+   const result = response.data; // Use the actual API structure
+    const assets = result.result.assets; // Extract the assets array (adjust if needed)
+
+    res.status(200).json({
+      success: true,
+      result: {
+        assets, // Pass the extracted assets
+      },
+    }); // Format the response to match Unity's expectations
   } catch (error) {
    res.status(500).json({
       error: 'Failed to fetch asset prices',
