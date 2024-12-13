@@ -287,18 +287,23 @@ export default (app: Express): void => {
 const getAssetPrices = async (req, res) => {
   const { appid } = req.query; // Retrieve the app ID from the query
   const apiKey = constants.webkey; // Set your Steam API key
-  const url = `https://partner.steam-api.com/ISteamEconomy/GetAssetPrices/v1/?key=${apiKey}&appid=${appid}`;
+  const currency = "USD"
+  const url = `https://partner.steam-api.com/ISteamEconomy/GetAssetPrices/v1/?key=${apiKey}&appid=${appid}&currency=&${currency}`;
   
   try {
-   const result = response.data; // Use the actual API structure
-    const assets = result.result.assets; // Extract the assets array (adjust if needed)
+    const response = await axios.get(url);
+    const { data } = response;
 
-    res.status(200).json({
-      success: true,
-      result: {
-        assets, // Pass the extracted assets
-      },
-    }); // Format the response to match Unity's expectations
+    // Check if the Steam API returned success
+    if (data && data.result && data.result.success) 
+    {
+      // Return the asset prices data in the expected format
+      res.status(200).json({
+        result: {
+          success: true,
+          assets: data.result.assets || [] // Send the assets or an empty array if none are found
+        }
+      });
   } catch (error) {
    res.status(500).json({
       error: 'Failed to fetch asset prices',
