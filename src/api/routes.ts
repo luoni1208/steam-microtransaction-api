@@ -297,6 +297,8 @@ const getAssetPrices = async (req, res) => {
    res.status(500).json({
       error: 'Failed to fetch asset prices',
       url: url,  // Add the URL to the response for easier debugging
+      details: error.message,
+      responseBody: error.response ? error.response.data : 'No response body'
     });
   }
 };
