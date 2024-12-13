@@ -285,9 +285,8 @@ export default (app: Express): void => {
 });
 
 const getAssetPrices = async (req, res) => {
-  const { appid } = req.query; // Retrieve the app ID from the query
+  const { appid, currency } = req.query; // Retrieve the app ID from the query
   const apiKey = constants.webkey; // Set your Steam API key
-  const currency = "USD"
   const url = `https://partner.steam-api.com/ISteamEconomy/GetAssetPrices/v1/?key=${apiKey}&appid=${appid}&currency=&${currency}`;
   
   try {
