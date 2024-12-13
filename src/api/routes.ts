@@ -296,8 +296,7 @@ const getAssetPrices = async (req, res) => {
     res.status(200).json({ success: true, products });
   } catch (error) {
    res.status(500).json({
-      error: 'Failed to fetch asset prices',
-      url: url,  // Add the URL to the response for easier debugging
+      error: 'Failed to fetch asset prices'
     });
   }
 };
