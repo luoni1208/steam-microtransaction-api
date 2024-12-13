@@ -291,7 +291,6 @@ const getAssetPrices = async (req, res) => {
   
   try {
     const response = await axios.get(url);
-    res.json(response.data); // Return the asset prices data
     const products = JSON.parse(response.data);
     res.status(200).json({ success: true, products });
   } catch (error) {
