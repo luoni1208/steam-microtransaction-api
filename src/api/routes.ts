@@ -287,11 +287,11 @@ export default (app: Express): void => {
 const getAssetPrices = async (req, res) => {
   const { appid, currency } = req.query; // Retrieve the app ID from the query
   const apiKey = constants.webkey; // Set your Steam API key
-  const url = `https://partner.steam-api.com/ISteamEconomy/GetAssetPrices/v1/?key=${apiKey}&appid=${appid}&USD';
+  const url = `https://partner.steam-api.com/ISteamEconomy/GetAssetPrices/v1/?key=${apiKey}&appid=${appid}&${currency}`;
   
   try {
     const response = await axios.get(url);
-    const products = JSON.parse(response.data);
+    const products = response.data; // No need to parse as axios does this automatically
     res.status(200).json({ success: true, products });
   } catch (error) {
    res.status(500).json({
