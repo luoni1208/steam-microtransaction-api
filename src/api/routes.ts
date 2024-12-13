@@ -292,7 +292,11 @@ const getAssetPrices = async (req, res) => {
   try {
     const response = await axios.get(url);
     const products = response.data; // No need to parse as axios does this automatically
-    res.status(200).json({ success: true, products });
+     res.status(200).json({
+      success: true,
+      url: url,  // Add the URL to the success response
+      products
+    });
   } catch (error) {
    res.status(500).json({
       error: 'Failed to fetch asset prices',
